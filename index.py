@@ -29,8 +29,8 @@ if df.empty:
 
 # Get multiple SMTP credentials
 smtp_credentials = [
-    (os.getenv("SMTP_USERNAME"), os.getenv("SMTP_PASSWORD")),
-    # (os.getenv("SMTP_USERNAME2"), os.getenv("SMTP_PASSWORD2")),
+    # (os.getenv("SMTP_USERNAME"), os.getenv("SMTP_PASSWORD")),
+    (os.getenv("SMTP_USERNAME2"), os.getenv("SMTP_PASSWORD2")),
     # (os.getenv("SMTP_USERNAME3"), os.getenv("SMTP_PASSWORD3")),
     # Add more as needed
 ]
@@ -89,42 +89,28 @@ thank_you_phrases = [
 
 factual_section = """
 <strong>About Me:</strong>
+<br><br>
+<strong>1. Experience:</strong>
 <br>
-<strong>1. Education:</strong>
+<ul>
+  <li><strong>Mavenir Systems Pvt Ltd</strong> - SDE Intern</li>
+  <li><strong>DRDO - LRDE</strong> - Machine Learning Project Intern</li>
+  <li><strong>DRDO - ISSA</strong> - Big Data Analytics & ML Intern</li>
+  <li><strong>Ministry of Electronics & IT, Govt. of India</strong> - AI Project Intern</li>
+  <li><strong>CYRAN AI Solutions, IIT Delhi</strong> - Full Stack Web Development Intern</li>
+  <li><strong>LeetCode Rating: 1930+ (Knight ranked)</strong></li>
+  <li>Selected for <strong>Amazon ML School 2024</strong></li>
+</ul>
 <br>
-- B.Tech Major in Electronics and Communication Engineering with a Minor in AI & ML from NIT Delhi, Graduating 2025.
+<strong>2. Technical Skills:</strong>
 <br>
-<br>
-<strong>2. Experience:</strong>
-<br>
-- <u>SDE Intern</u> at <strong>Mavenir Systems Pvt Ltd</strong>
-<br>
-- <u>Machine Learning Project Intern</u> at <strong>DRDO</strong> - LRDE
-<br>
-- <u>Big Data Analytics & ML Intern</u> at <strong>DRDO</strong> - ISSA
-<br>
-- <u.AI Project Intern</u> at <strong>Ministry of Electronics & IT, Govt. of India</strong>
-<br>
-- <u>Full Stack Web Development Intern</u> at <strong>CYRAN AI Solutions, IIT Delhi</strong>
-<br>
-- <strong>LeetCode Rating: 1930+ (Knight ranked)</strong>
-<br>
-- Selected for <strong>Amazon ML School 2024</strong>
-<br>
-- Secured <strong>98.4th Percentile</strong> out of 1.1 million candidates in JEE Mains 2021
-<br>
-<strong>3. Technical Skills:</strong>
-<br>
-- <u>Programming Languages:</u> C++, Python, JavaScript
-<br>
-- <u>Machine Learning & AI:</u> PyTorch, TensorFlow, Neural Networks, NLP, Computer Vision
-<br>
-- <u>Web Development:</u> MongoDB, MySQL, Express.js, Node.js, CSS
-<br>
-- <u>Big Data & DevOps:</u> Apache Kafka, Apache Spark
-<br>
-- <u>Frameworks & Libraries:</u> Streamlit, JQuery, Scikit-Learn, Pandas, Numpy, Seaborn
-<br>
+<ul>
+  <li><u>Programming Languages:</u> C++, Python, JavaScript</li>
+  <li><u>Machine Learning & AI:</u> PyTorch, TensorFlow, Neural Networks, NLP, Computer Vision</li>
+  <li><u>Web Development:</u> MongoDB, MySQL, Express.js, Node.js, CSS</li>
+  <li><u>Big Data & DevOps:</u> Apache Kafka, Apache Spark</li>
+  <li><u>Frameworks & Libraries:</u> Streamlit, JQuery, Scikit-Learn, Pandas, Numpy, Seaborn</li>
+</ul>
 """
 
 # Check if PDF exists
@@ -156,11 +142,11 @@ def generate_email_content(name, company):
     {job_hunting} If feasible I'd be excited to explore potential internship opportunities within your org.
     <br><br>
     {factual_section}
-    <br><br>
+    <br>
     {closing_remark}
     <br>
     {follow_up}
-    <br>
+    <br><br>
     {thank_you}
     <br><br>
     Please find my resume attached. You can also connect with me on:
