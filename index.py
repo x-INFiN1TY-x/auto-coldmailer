@@ -1,6 +1,7 @@
 import pandas as pd
 import smtplib
 import os
+import logging
 from dotenv import load_dotenv
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -8,22 +9,31 @@ from email.mime.application import MIMEApplication
 import time
 import random
 
+# Load environment variables
 load_dotenv()
 
-logging.basicConfig(filename='email_log.log', level=logging.INFO)
+# Set up logging
+logging.basicConfig(filename="email_log.log", level=logging.INFO)
 
-excel_file = 'your csv file.csv'
+# Load CSV file
+excel_file = "your csv file.csv"
+if not os.path.exists(excel_file):
+    raise FileNotFoundError(f"CSV file not found: {excel_file}")
+
 df = pd.read_csv(excel_file)
+if df.empty:
+    raise ValueError("CSV file is empty")
 
-smtp_username = os.getenv('SMTP_USERNAME')
-smtp_password = os.getenv('SMTP_PASSWORD')
-server = smtplib.SMTP('smtp.gmail.com:587')
-server.ehlo()
-server.starttls()
-server.login(smtp_username, smtp_password)
+# Get SMTP credentials
+smtp_username = os.getenv("SMTP_USERNAME")
+smtp_password = os.getenv("SMTP_PASSWORD")
+if not smtp_username or not smtp_password:
+    raise ValueError("SMTP_USERNAME and SMTP_PASSWORD must be set in the .env file")
 
+# Email body template
 email_body_template = """
-Hey {name},
+Respected Sir/Ma'am,
+<br>
 <br>
 I'm Tanishq Ranjan, a 4th Year engineering undergrad at the National Institute of Technology Delhi. I came across {company} and was impressed by its remarkable growth. If feasible I'd be excited to explore potential internship opportunities within {company}. 
 <br>
@@ -101,34 +111,51 @@ Department of Electronics and Communication Engineering
 NATIONAL INSTITUTE OF TECHNOLOGY DELHI [NITD]
 """
 
+# Check if PDF exists
+pdf_path = "TanishqRanjan.pdf"
+if not os.path.exists(pdf_path):
+    raise FileNotFoundError(f"PDF file not found: {pdf_path}")
 
-for index, row in df.iterrows():
-    time.sleep(random.randint(1, 5))
+# Send emails
+try:
+    with smtplib.SMTP("smtp.gmail.com:587") as server:
+        server.ehlo()
+        server.starttls()
+        server.login(smtp_username, smtp_password)
 
-    message = MIMEMultipart()
-    message['Subject'] = f"Internship Inquiry cum Application @{row['Company']} - Tanishq Ranjan, NIT Delhi"
-    message['From'] = smtp_username
-    message['To'] = row['Email']
+        for index, row in df.iterrows():
+            time.sleep(random.randint(5, 15))  # Increased delay to avoid spam flags
 
-    email_body = email_body_template.format(
-        name=row['First Name'], 
-        company=row['Company'], 
-        linkedin_link="https://in.linkedin.com/in/tanishq-ranjan-26a52740",
-        github_link="https://github.com/x-INFiN1TY-x",
-        portfolio_link="https://leetcode.com/u/211220058/"
-    )
-    message.attach(MIMEText(email_body, 'html'))
+            message = MIMEMultipart()
+            message["Subject"] = (
+                f"Internship Inquiry cum Application @{row['Company']} - Tanishq Ranjan, NIT Delhi"
+            )
+            message["From"] = smtp_username
+            message["To"] = row["Email"]
 
-    pdf_path = "./path to pdf.pdf"
-    with open(pdf_path, "rb") as pdf_file:
-        pdf_attachment = MIMEApplication(pdf_file.read(), _subtype="pdf")
-        pdf_attachment.add_header('Content-Disposition', f'attachment; filename={pdf_path}')
-        message.attach(pdf_attachment)
+            email_body = email_body_template.format(
+                name=row["First Name"],
+                company=row["Company"],
+                linkedin_link="https://in.linkedin.com/in/tanishq-ranjan-26a52740",
+                github_link="https://github.com/x-INFiN1TY-x",
+                portfolio_link="https://leetcode.com/u/211220058/",
+            )
+            message.attach(MIMEText(email_body, "html"))
 
-    try:
-        server.sendmail(smtp_username, row['Email'], message.as_string())
-        logging.info(f"Email sent to {row['Email']}")
-    except Exception as e:
-        logging.error(f"Error sending email to {row['Email']}: {e}")
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_attachment = MIMEApplication(pdf_file.read(), _subtype="pdf")
+                pdf_attachment.add_header(
+                    "Content-Disposition", f"attachment; filename={pdf_path}"
+                )
+                message.attach(pdf_attachment)
 
-server.quit()
+            try:
+                server.sendmail(smtp_username, row["Email"], message.as_string())
+                logging.info(f"Email sent to {row['Email']}")
+            except Exception as e:
+                logging.error(f"Error sending email to {row['Email']}: {e}")
+
+except Exception as e:
+    logging.error(f"Error in email sending process: {e}")
+
+logging.info("Email sending process completed")
