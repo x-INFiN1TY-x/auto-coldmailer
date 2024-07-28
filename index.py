@@ -196,7 +196,7 @@ try:
         # Check if we've reached the daily limit
         if emails_sent_today >= MAX_DAILY_EMAILS:
             logging.info("Daily email limit reached. Pausing until tomorrow.")
-            time.sleep(86400)  # Sleep for 24 hours
+            time.sleep(8640)  # Sleep for 2.4 hours
             emails_sent_today = 0
             current_date = datetime.now().date()
 
@@ -208,13 +208,13 @@ try:
         # Randomly select SMTP credentials
         smtp_username, smtp_password = random.choice(smtp_credentials)
 
-        with smtplib.SMTP("smtp.gmail.com:587") as server:
+        with smtplib.SMTP("smtp.gmail.com:587", timeout=2000) as server:
             server.ehlo()
             server.starttls()
             server.login(smtp_username, smtp_password)
 
             # Randomize time delay to avoid spam detection
-            time.sleep(random.randint(300, 1800) + random.random() * 60)
+            time.sleep(random.randint(631, 1800))
 
             message = MIMEMultipart()
             message["Subject"] = (
